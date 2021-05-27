@@ -1,0 +1,45 @@
+# depslib dependency file v1.0
+1621745725 source:c:\users\dylan\documents\tarea_3\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<math.h>
+	<ctype.h>
+
+1621748539 source:c:\users\felipe\desktop\tarea_3\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<math.h>
+	<ctype.h>
+
+1620273607 source:f:\auniversidad\fundamentos programacion\tarea_3\hashmap.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<math.h>
+	<ctype.h>
+	"hashmap.h"
+
+1620007016 f:\auniversidad\fundamentos programacion\tarea_3\hashmap.h
+
+1617587923 source:f:\auniversidad\fundamentos programacion\tarea_3\list.c
+	<stdio.h>
+	<stdlib.h>
+	<assert.h>
+	"list.h"
+
+1617587798 f:\auniversidad\fundamentos programacion\tarea_3\list.h
+	<stdio.h>
+	<string.h>
+
+1621873671 source:f:\auniversidad\fundamentos programacion\tarea_3\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<math.h>
+	<ctype.h>
+	<stdbool.h>
+	"list.h"
+	"hashmap.h"
+
