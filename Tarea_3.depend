@@ -33,13 +33,14 @@
 	<stdio.h>
 	<string.h>
 
-1621873671 source:f:\auniversidad\fundamentos programacion\tarea_3\main.c
+1622087198 source:f:\auniversidad\fundamentos programacion\tarea_3\main.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
 	<math.h>
 	<ctype.h>
 	<stdbool.h>
+	<time.h>
 	"list.h"
 	"hashmap.h"
 
