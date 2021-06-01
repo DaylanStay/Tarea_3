@@ -56,10 +56,11 @@ void *last(List *list){
     if(list->tail && list->tail->data) list->current =list->tail;
     return (void *)list->current->data;
 }
-void pushBack(List * list, void * data) {
 
+void pushBack(List * list, void * data) {
     list->current = list->tail;
-    pushCurrent(list,data);
+    if(list->current==NULL) pushFront(list,data);
+    else pushCurrent(list,data);
 }
 
 void * prev(List * list) {
@@ -124,9 +125,6 @@ void * popCurrent(List * list) {
         list->head = list->current->next;
 
     list->current = aux->prev;
-
-
-
 
     free(aux);
 

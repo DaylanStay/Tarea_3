@@ -44,3 +44,34 @@
 	"list.h"
 	"hashmap.h"
 
+1620273607 source:c:\users\cesar\desktop\pucv\segundo año\estructura de datos\tarea 3\tarea_3\hashmap.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<math.h>
+	<ctype.h>
+	"hashmap.h"
+
+1620007016 c:\users\cesar\desktop\pucv\segundo año\estructura de datos\tarea 3\tarea_3\hashmap.h
+
+1622171956 source:c:\users\cesar\desktop\pucv\segundo año\estructura de datos\tarea 3\tarea_3\list.c
+	<stdio.h>
+	<stdlib.h>
+	<assert.h>
+	"list.h"
+
+1617587798 c:\users\cesar\desktop\pucv\segundo año\estructura de datos\tarea 3\tarea_3\list.h
+	<stdio.h>
+	<string.h>
+
+1622511721 source:c:\users\cesar\desktop\pucv\segundo año\estructura de datos\tarea 3\tarea_3\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<math.h>
+	<ctype.h>
+	<stdbool.h>
+	<time.h>
+	"list.h"
+	"hashmap.h"
+
