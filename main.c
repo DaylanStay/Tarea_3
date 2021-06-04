@@ -22,15 +22,22 @@ typedef struct{
     int* trayecto;
 }ruta;
 
+ruta *crearTrayecto(n){
+    ruta *aux = (ruta *) calloc(n,sizeof(ruta));
+    aux->trayecto = (ruta *) malloc(sizeof(ruta) * n);
+    return aux;
+}
+
 const char *get_csv_field (char *, int);
 HashMap* importar(FILE *, int *);
-void distanciaEntregas(HashMap *, int);
+void distanciaEntregas(HashMap *, int *);
 void entregasCercanas (HashMap *);
-void crearRuta(HashMap *, int, List *);
+void crearRuta(HashMap *, int*, List *);
 void crearRutaAleatoria(HashMap *, int, List *);
 float calcularDistancia(int, int, int, int);
 int comparar(const void *, const void *);
-void mejorRuta(List *);
+void mejorRuta(List *, int *, HashMap *);
+void manual(List *, int *, HashMap*, ruta*);
 void mostrarRutas(List *);
 
 int main(){
@@ -38,14 +45,16 @@ int main(){
     FILE *archivo = fopen("tarea3_tsp.txt", "r");
     if(archivo == NULL) return 1;
     int *n;
-    HashMap *mapCord = importar(archivo, n);
+    HashMap *mapCord = importar(archivo, &n);
     List *listaRutas = createList();
+    // printf("caca %i caca\n", n);
 
-    distanciaEntregas(mapCord,n);
-    entregasCercanas(mapCord);
+    //distanciaEntregas(mapCord,n);
+    //printf("caca %i caca\n", n);
+    //entregasCercanas(mapCord);
     crearRuta(mapCord, n, listaRutas);
     crearRutaAleatoria(mapCord, n, listaRutas);
-    //mejorRuta(listaRutas);
+    mejorRuta(listaRutas, n, mapCord);
     mostrarRutas(listaRutas);
 
     /*ciudad *p = firstMap(mapCord);
@@ -60,13 +69,16 @@ HashMap* importar(FILE *archivo , int *n) { // Opcion 1
 
     printf("ingrese el numero de entregas a realizar (no puede ser mayor que 48)\n");
     do {
-        scanf("%i", &n);
-        if(n > 48 || n < 1) printf("numero invalido\n");
-        if(n == 0) printf("no hay ciudad para entregar el pedido\n");
-    }while(n > 48 || n < 1);
+        scanf("%i", n);
+        if(*n > 48 || *n < 1) printf("numero invalido\n");
+        if(*n == 0){
+          printf("no hay ciudad para entregar el pedido\n");
+          exit(1);
+        }
+    }while(*n > 48 || *n < 1);
 
-    ciudad *cord = (ciudad*) malloc (sizeof(ciudad) * n);
-    int aux = n * 0.3;
+    ciudad *cord = (ciudad*) malloc (sizeof(ciudad) * *n);
+    int aux = *n + *n * 0.3;
     HashMap *mapCord = createMap(aux);
 
     int line;
@@ -79,10 +91,11 @@ HashMap* importar(FILE *archivo , int *n) { // Opcion 1
         cord[i].marca = false;
         insertMap(mapCord, &cord[i].id, &cord[i]);
         i++;
-        if(i == n) return mapCord;
+        if(i == *n) return mapCord;
     }
+
 }
-void distanciaEntregas(HashMap *mapCord , int n){ // Opcion 2
+void distanciaEntregas(HashMap *mapCord , int *n){ // Opcion 2
 
     int aux;
     ciudad *entrega1;
@@ -128,7 +141,7 @@ void entregasCercanas(HashMap *mapCord){ // Opcion 3
 
 }
 
-void crearRuta(HashMap *mapCord, int n, List* listaRutas) { // Opcion 4
+void crearRuta(HashMap *mapCord, int *n, List* listaRutas) { // Opcion 4
     printf("este es el valor de la n %i \n",n);
     int x, y;
     int id = 0;
@@ -168,16 +181,21 @@ void crearRuta(HashMap *mapCord, int n, List* listaRutas) { // Opcion 4
         cont++;
     }
 
+    ruta *s = crearTrayecto(n);
+
     printf("ruta generada: ");
     ciudad* a = last(rutaCreada);
     ciudad* d = first(rutaCreada);
+    int i=0;
     while(d != NULL) {
         if(a->id == d->id) break; // para estetica con el printf
         printf("%i -> ", d->id);
+        s->trayecto[i] = d->id;
         d = next(rutaCreada);
+        i++;
     }
     printf("%i\n", d->id);
-
+    s->trayecto[i] = d->id;
 
     printf("Ingrese el nombre de la ruta: \n");
     char *nombreRuta = (char *) malloc(sizeof(char) * 20);
@@ -186,10 +204,13 @@ void crearRuta(HashMap *mapCord, int n, List* listaRutas) { // Opcion 4
     fflush(stdin);
     printf("Distancia total recorrida de la ruta %s es %f\n", nombreRuta, distanciaTotal);
 
-    ruta *s = (ruta *) malloc(sizeof(ruta)*1);
     s->distancia = distanciaTotal;
     strcpy(&s->nombre, nombreRuta);
     pushBack(listaRutas, s);
+
+    for(i = 0 ; i < n ; i++){
+        printf("Estos son los valores de la trayectoria: %i \n",s->trayecto[i]);
+    }
 }
 
 void crearRutaAleatoria(HashMap *mapCord, int n, List * listaRutas){ // Opcion 5
@@ -223,14 +244,20 @@ void crearRutaAleatoria(HashMap *mapCord, int n, List * listaRutas){ // Opcion 5
     }
 
     printf("ruta generada: ");
+    ruta *s = crearTrayecto(n);
     int a = last(rutaCreada);
     int d = first(rutaCreada);
+    int i=0;
     while(d != NULL) {
         if(a == d) break; // para estetica con el printf
         printf("%i -> ", d);
+        s->trayecto[i] = d;
         d = next(rutaCreada);
+        i++;
     }
     printf("%i\n", d);
+    s->trayecto[i] = d;
+
     printf("Ingrese el nombre de la ruta: \n");
     char *nombreRuta = (char *) malloc(sizeof(char) * 20);
     fflush(stdin);
@@ -238,10 +265,14 @@ void crearRutaAleatoria(HashMap *mapCord, int n, List * listaRutas){ // Opcion 5
     fflush(stdin);
     printf("Distancia total recorrida de la ruta %s es %f\n", nombreRuta, distanciaTotal);
 
-    ruta *s = (ruta *) malloc(sizeof(ruta)*1);
+//    ruta *s = (ruta *) malloc(sizeof(ruta)*1);
     s->distancia = distanciaTotal;
     strcpy(&s->nombre, nombreRuta);
     pushBack(listaRutas, s);
+
+     for(i = 0 ; i < n ; i++){
+        printf("Estos son los valores de la trayectoria: %i \n",s->trayecto[i]);
+    }
 }
 
 float calcularDistancia(int x, int y, int X, int Y) {
@@ -254,9 +285,98 @@ float calcularDistancia(int x, int y, int X, int Y) {
     return distancia;
 }
 
-/*void mejorRuta(){
+void mejorRuta(List * listaRutas, int *n, HashMap * mapCord){
+    printf("RUTAS ALMACENADAS: \n");
+    ruta *p = first(listaRutas);
+    while(p!=NULL){
+        printf("%s\n",p->nombre);
+        p = next(listaRutas);
+    }
 
-}*/
+    printf("INGRESE EL NOMBRE DE LA RUTA A MEJORAR \n");
+    char *nombreRuta = (char *) malloc(sizeof(char) * 20);
+    fflush(stdin);
+    scanf("%[^\n]s", nombreRuta);
+    fflush(stdin);
+
+    p = first(listaRutas);
+    while(p!=NULL){
+        if(strcmp(nombreRuta, p->nombre) == 0) break;
+        p = next(listaRutas);
+    }
+
+
+    int aux;
+    printf("DESEA MEJORAR RUTA AUTOMATICAMENTE O MANUALMENTE, SI LO DESEA AUTOMATICAMENTE PRESIONE 1 SINO PRESIONE 0\n");
+    scanf("%i",&aux);
+
+    if(aux == 1){
+        printf("AUTOMATICO\n");
+
+    }
+    if(aux == 0){
+        printf("MANUAL\n");
+        manual(listaRutas, n, mapCord, p);
+    }
+
+}
+
+void manual(List * listaRutas, int* n, HashMap* mapCord, ruta *p){
+    int a, b;
+    int aux;
+    ciudad* entrega1;
+    ciudad* entrega2;
+    //List* entregas = createList();
+
+    for(int i = 0 ; i < n ; i++){
+        printf("%i -> ", p->trayecto[i]);
+        aux = p->trayecto[i];
+        //pushBack(entregas,aux);
+    }
+
+    printf("SELECCIONE DOS ENTREGAS\n");
+    printf("Ingrese primera entrega: ");
+    scanf("%i", &a);
+    printf("Ingrese segunda entrega: ");
+    scanf("%i", &b);
+
+    for(int i=0 ; i < n ; i++){
+        if(p->trayecto[i] == a){
+            p->trayecto[i] =  b;
+            i++;
+        }
+
+        if(p->trayecto[i] == b){
+            p->trayecto[i] = a;
+            break;
+        }
+    }
+
+    int i=0, x = 0, y =0;
+    ciudad* temp;
+    float distancia = 0;
+    temp = searchMap(mapCord, &p->trayecto[i]);
+    x = temp->x;
+    y = temp->y;
+    for(i = 1 ; i < n ; i++){
+        temp = searchMap(mapCord, &p->trayecto[i]);
+        distancia += calcularDistancia(temp->x,temp->y,x,y);
+        x = temp->x;
+        y = temp->y;
+    }
+
+    printf("Esta es la primera distancia: %f\n", p->distancia);
+    printf("esta es la nueva distancia : %f\n", distancia);
+
+    if(p->distancia > distancia){
+        p->distancia = distancia;
+        printf("RUTA ACTUALIZADA");
+    }
+
+    if(p->distancia < distancia){
+        printf("LA RUTA EMPEORO, SE VUELVE A LA RUTA ORIGINAL");
+    }
+}
 
 int comparar(const void *pivote, const void *item){ //Este qsort nos sirve para ordenar por orden de pc
    ruta *ptrPivote = (ruta *) pivote;
@@ -266,7 +386,6 @@ int comparar(const void *pivote, const void *item){ //Este qsort nos sirve para 
 }
 
 void mostrarRutas(List *listaRutas){ // Opcion 7
-
     ruta *a = NULL;
     a = (ruta *) malloc(sizeof(ruta) * 49);
     if(a == NULL) exit(EXIT_FAILURE);
@@ -285,5 +404,4 @@ void mostrarRutas(List *listaRutas){ // Opcion 7
     for(j = 0; j < i; j++){
         printf("| %s | %f |\n",a[j].nombre,a[j].distancia);
     }
-
 }
