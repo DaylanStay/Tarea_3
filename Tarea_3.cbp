@@ -43,6 +43,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="tarea3_tsp.txt" />
+		<Unit filename="treemap.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="treemap.h" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>

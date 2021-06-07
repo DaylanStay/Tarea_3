@@ -11,14 +11,14 @@
 
 typedef struct{
     int id;
-    int x;
-    int y;
+    long long x;
+    long long y;
     bool marca;
-    float recorrido;
+    double recorrido;
 }ciudad;
 
 typedef struct{
-    float distancia;
+    double distancia;
     char nombre[20];
     int* trayecto;
 }ruta;
@@ -36,7 +36,7 @@ void distanciaEntregas(HashMap *, int);
 void entregasCercanas (HashMap *, int);
 void crearRuta(HashMap *, int*, List *);
 void crearRutaAleatoria(HashMap *, int, List *);
-float calcularDistancia(int, int, int, int);
+double calcularDistancia(long long, long long, long long, long long);
 int comparar(const void *, const void *);
 void mejorarRuta(List *, int *, HashMap *);
 void manual(List *, int *, HashMap*, ruta*);
@@ -134,7 +134,7 @@ void distanciaEntregas(HashMap *mapCord , int n){ // Opcion 2
     int aux;
     ciudad *entrega1;
     ciudad *entrega2;
-    float distancia = 0;
+    double distancia = 0;
     printf("Tiene disponible %i entregas para calcular \n",n);
 
     /* Aqui se llama y se recorre el mapa para mostrarle al usuario con mayor claridad cuales son las entregas que tiene con sus
@@ -155,28 +155,28 @@ void distanciaEntregas(HashMap *mapCord , int n){ // Opcion 2
     scanf("%i", &aux);
     entrega2 = searchMap(mapCord, &aux); // Se hace la misma operacion que arriba
     distancia = calcularDistancia(entrega1->x,entrega1->y,entrega2->x,entrega2->y); // Se usa la funcion calcularDistancia para obtener el valor de las distancia entre las dos entregas escogidas
-    printf("\nEsta es la distancia entre las dos entregas elegidas: %f \n", distancia);
+    printf("\nEsta es la distancia entre las dos entregas elegidas: %lf \n", distancia);
 }
 
-int lower_than_int(void* key1, void* key2){ //Funcion utilizada para crear arbol binario
-    int k1 = *((int*) (key1));
-    int k2 = *((int*) (key2));
+long long lower_than_int(void* key1, void* key2){ //Funcion utilizada para crear arbol binario
+    long long k1 = *((long long*) (key1));
+    long long k2 = *((long long*) (key2));
     return k1<k2;
 }
 
 void entregasCercanas(HashMap *mapCord, int n){ // Opcion 3
     /*Esta funcion mostrara las 3 primeras entregas cercana */
 
-    int x, y;
+    long long x, y;
     printf("Ingrese coordenada X\n");
-    scanf("%i", &x);
+    scanf("%lld", &x);
     printf("Ingrese coordenada Y\n");
-    scanf("%i", &y);
+    scanf("%lld", &y);
     TreeMap *ordenar = createTreeMap(lower_than_int); // Se crea un mapa ordenado para almacenar las distancias para luego mostrarlas ordenadas de menor a mayor
     ciudad *p =firstMap(mapCord); // Aqui se va recorriendo el mapa
     while(p != NULL){
         if(p->marca == false) { // Si la marca es falso significa que no se ha pasado por ella todavia por lo que entraria al ciclo
-            float aux = calcularDistancia(x, y, p->x, p->y); // Se calcula la distancia otra vez usando la funcion correspondiente
+            double aux = calcularDistancia(x, y, p->x, p->y); // Se calcula la distancia otra vez usando la funcion correspondiente
             p->recorrido = aux; // Se le asigna la distancia a la variable p
             insertTreeMap(ordenar, &p->recorrido, p); // Y se inserta en el mapa con la del recorrido y el valor de la p
         }
@@ -186,7 +186,7 @@ void entregasCercanas(HashMap *mapCord, int n){ // Opcion 3
     p = firstTreeMap(ordenar); // Se llama al mapa ordenado y se empieza a recorrer
     for(int i = 0 ; i < n ; i++) {
         if(i == 3) break; // Cuando ya se muestren las 3 entregas, el programa rompera su ciclo
-        printf("Distancia entre su ubicacion y la ciudad %i = %.2f \n", p->id, p->recorrido);
+        printf("Distancia entre su ubicacion y la ciudad %i = %lf \n", p->id, p->recorrido);
         p = nextTreeMap(ordenar);
     }
     free(ordenar); // Se libera memoria
@@ -195,24 +195,24 @@ void entregasCercanas(HashMap *mapCord, int n){ // Opcion 3
 void crearRuta(HashMap *mapCord, int *n, List* listaRutas) { // Opcion 4
     /* Funcion donde el usuario ingresara sus coordenadas y ira escogiendo que entrega quiere realizar primero, asi hasta completar toda la ruta de entrega*/
 
-    int x, y;
+    long long x, y;
     int id = 0;
     printf("Ingrese coordenada X\n");
-    scanf("%i", &x);
+    scanf("%lld", &x);
     printf("Ingrese coordenada Y\n");
-    scanf("%i", &y);
+    scanf("%lld", &y);
     int cont = 0; // Cuando el contador sea igual a la n se detendra el ciclo y se dejara de escoger entregas
     ciudad *p;
 
-    float distanciaTotal = 0;
+    double distanciaTotal = 0;
     List *rutaCreada = createList(); // Se crea una lista para almacenar las rutas creadas
     while(cont < n) { // En este while se estarian generando nuestros nodos adyacentes
         TreeMap *orden = createTreeMap(lower_than_int); // Al igual que en la anterior funcion se crea un mapa ordenado para que vaya mostrando las distancia de menor a mayor
         p = firstMap(mapCord); // Se empieza a recorrer el mapa hasta el final
         while(p != NULL){
             if(p->marca == false) { // Si la marca es falsa significa que todavia no se calcula la distancia de dicha entrega
-                float aux = calcularDistancia(x, y, p->x, p->y); // Se usa la funcion para calcular la distancia
-                p->recorrido = aux; // Se le asigna a la variable p la distancia conseguida por la funciÃ³n
+                double aux = calcularDistancia(x, y, p->x, p->y); // Se usa la funcion para calcular la distancia
+                p->recorrido = aux; // Se le asigna a la variable p la distancia conseguida por la función
                 insertTreeMap(orden, &p->recorrido, p); // Se inserta en el mapa ordenado con la distancia como clave
             }
             p = nextMap(mapCord);
@@ -220,7 +220,7 @@ void crearRuta(HashMap *mapCord, int *n, List* listaRutas) { // Opcion 4
         p = firstTreeMap(orden); // Se recorre el mapa ordenado
         while(p != NULL){
             if(p->marca == false) { // Si es false significa que todavia no se pasa por dicha entrega
-                printf("Distancia entre su ubicacion y la ciudad %i = %.2f \n", p->id, p->recorrido);
+                printf("Distancia entre su ubicacion y la ciudad %i = %lf \n", p->id, p->recorrido);
             }
 
             p= nextTreeMap(orden);
@@ -274,7 +274,7 @@ void crearRuta(HashMap *mapCord, int *n, List* listaRutas) { // Opcion 4
     scanf("%[^\n]s", nombreRuta); // Aqui se le pone un nombre a la ruta
     fflush(stdin);
     printf("salio \n");
-    printf("Distancia total recorrida de la ruta %s es %f\n", nombreRuta, distanciaTotal); // Muestra el nombre y la distancia total recorrida
+    printf("Distancia total recorrida de la ruta %s es %lf\n", nombreRuta, distanciaTotal); // Muestra el nombre y la distancia total recorrida
 
     // Aqui se copia el nombre y la distancia en la variable ruta para luego insertarla en la lista de rutas (donde estaran todas las rutas que fueron creadas)
     s->distancia = distanciaTotal;
@@ -286,15 +286,15 @@ void crearRuta(HashMap *mapCord, int *n, List* listaRutas) { // Opcion 4
 void crearRutaAleatoria(HashMap *mapCord, int n, List * listaRutas){ // Opcion 5
     /* Esta funcion cumple el mismo objetivo que el crear ruta, pero estas no son escogidas por el usuario sino por la computadora*/
 
-    int x, y;
+    long long x, y;
     int id = 0;
     printf("Ingrese coordenada X\n");
-    scanf("%i", &x);
+    scanf("%lld", &x);
     printf("Ingrese coordenada Y\n");
-    scanf("%i", &y);
+    scanf("%lld", &y);
     int cont = 0;
     ciudad *p;
-    float distanciaTotal = 0;
+    double distanciaTotal = 0;
     List *rutaCreada = createList();
     HashMap *mapRand = createMap(n + 20); // Se crea un mapa para almacenar la id que el programa arroja
     /* En este ciclo while va haciendo el mismo proceso que en la anterior funcion pero ahora aleatoriamente se van escogiendo las entregas */
@@ -341,7 +341,7 @@ void crearRutaAleatoria(HashMap *mapCord, int n, List * listaRutas){ // Opcion 5
     fflush(stdin);
     scanf("%[^\n]s", nombreRuta);
     fflush(stdin);
-    printf("Distancia total recorrida de la ruta %s es %f\n", nombreRuta, distanciaTotal);
+    printf("Distancia total recorrida de la ruta %s es %lf\n", nombreRuta, distanciaTotal);
     s->distancia = distanciaTotal;
     strcpy(&s->nombre, nombreRuta);
     pushBack(listaRutas, s);
@@ -351,11 +351,11 @@ void crearRutaAleatoria(HashMap *mapCord, int n, List * listaRutas){ // Opcion 5
     free(mapRand);
 }
 
-float calcularDistancia(int x, int y, int X, int Y) { // Funcion para calcular la distancia con la formula matematica entre dos puntos
-    float distancia;
-    int resultadoX = abs(x - X);
+double calcularDistancia(long long x, long long y, long long X, long long Y) { // Funcion para calcular la distancia con la formula matematica entre dos puntos
+    double distancia;
+    long long resultadoX = abs(x - X);
     resultadoX = pow(resultadoX, 2);
-    int resultadoY = abs(y - Y);
+    long long resultadoY = abs(y - Y);
     resultadoY = pow(resultadoY, 2);
     distancia = sqrt(resultadoX + resultadoY);
     return distancia;
@@ -461,7 +461,7 @@ void upgrade(int a, int b, int n, ruta *p, HashMap* mapCord) {
     // Aqui se va a buscar en el mapa la trayectoria para sacar la nueva distancia tras el intercambio de la trayectoria
     int i=0, x = 0, y =0;
     ciudad* temp;
-    float distancia = 0;
+    double distancia = 0;
     temp = searchMap(mapCord, &p->trayecto[i]);
     x = temp->x;
     y = temp->y;
@@ -474,8 +474,8 @@ void upgrade(int a, int b, int n, ruta *p, HashMap* mapCord) {
     }
 
     // Se mostrara la distancia original y la nueva distancia
-    printf("Esta es la primera distancia: %f\n", p->distancia);
-    printf("Esta es la nueva distancia : %f\n", distancia);
+    printf("Esta es la primera distancia: %lf\n", p->distancia);
+    printf("Esta es la nueva distancia : %lf\n", distancia);
 
     // Si la nueva distancia es menor que la distancia original se cambiara la original por la nueva, si pasa lo contrario que la original es menor que la nueva, se mantedra la distancia original y ruta original.
 
@@ -521,26 +521,27 @@ void mostrarRutas(List *listaRutas){ // Opcion 7
     qsort(a,i,sizeof(ruta),comparar);
     int j;
     for(j = 0; j < i; j++){
-        printf("| %s | %f |\n",a[j].nombre,a[j].distancia);
+        printf("| %s | %lf |\n",a[j].nombre,a[j].distancia);
     }
 }
 
 void mejorRuta(HashMap *mapCord, int n, List *listaRutas){
-    int x, y, cont = 0;
+    long long x, y;
+    int cont = 0;
     int id = 0;
     printf("Ingrese coordenada X\n");
-    scanf("%i", &x);
+    scanf("%lld", &x);
     printf("Ingrese coordenada Y\n");
-    scanf("%i", &y);
+    scanf("%lld", &y);
     ciudad *p;
     List *rutaCreada = createList(); // Se crea una lista para almacenar la nueva ruta
-    float aux = 0, distanciaTotal = 0;
+    double aux = 0, distanciaTotal = 0;
 
     while(cont < n) {
         p = firstMap(mapCord);
         while(p != NULL){
             if(p->marca == false) { // Al igual que antes si la marca es falsa significa que todavia no se pasa por dicha entrega
-                if(aux > calcularDistancia(x, y, p->x, p->y) || aux == 0) { // Si el aux es mayor o igual a 0 entrara al if, esto servira para obtener la distancia mas pequeÃ±a entre las entregas
+                if(aux > calcularDistancia(x, y, p->x, p->y) || aux == 0) { // Si el aux es mayor o igual a 0 entrara al if, esto servira para obtener la distancia mas pequeña entre las entregas
                     aux = calcularDistancia(x, y, p->x, p->y); // Se van actualizando la distancia entre las entregas
                     id = p->id; // Se actualiza la id, cuando no entre al if estara sera la entrega mas corta
                 }
@@ -584,7 +585,7 @@ void mejorRuta(HashMap *mapCord, int n, List *listaRutas){
     }
     printf("%i\n", p->id);
     s->trayecto[i] = p->id;
-    printf("Distancia total recorrida de la %s es %f\n", s->nombre, distanciaTotal);
+    printf("Distancia total recorrida de la %s es %lf\n", s->nombre, distanciaTotal);
     pushBack(listaRutas, s);
 
     free(rutaCreada); // Se libera la lista de la ruta creada
